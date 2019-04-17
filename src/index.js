@@ -53,6 +53,7 @@ class Square extends React.Component {
             }],
             stepNumber: 0,
             xIsNext: true,
+            isDraw: false
         }
     }
 
@@ -60,16 +61,19 @@ class Square extends React.Component {
         const history = this.state.history.slice(0, this.state.stepNumber + 1)
         const current = history[history.length - 1];
         const squares = current.squares.slice();
+
         if(calculateWinner(squares) || squares[i]){
             return;
         }
         squares[i] = this.state.xIsNext ? 'X' : 'O';
+
         this.setState({
             history: history.concat([{
                 squares: squares,
             }]),
             stepNumber: history.length,
             xIsNext: !this.state.xIsNext,
+            isDraw: history.length===9 ? true : false
         });
     }
 
@@ -77,6 +81,7 @@ class Square extends React.Component {
         this.setState({
             stepNumber: step,
             xIsNext: (step%2)===0,
+            isDraw: false
         })
     }
 
@@ -84,6 +89,7 @@ class Square extends React.Component {
         const history = this.state.history;
         const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
+        const isDraw = this.state.isDraw;
 
         const moves = history.map((step, move) => {
             const desc = move ?
@@ -99,7 +105,10 @@ class Square extends React.Component {
         let status;
         if(winner) {
             status = 'Winner: ' + winner;
-        } else{
+        } else if(isDraw){
+          status = 'Draw';         
+        }
+        else{
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
 
